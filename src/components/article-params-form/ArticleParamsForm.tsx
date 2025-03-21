@@ -78,7 +78,7 @@ export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 							title='Шрифт'
 							selected={selectedFont}
 							options={fontFamilyOptions}
-							onChange={(selected) => setSelectedFont(selected)}
+							onChange={(value) => setSelectedFont(value)}
 						/>
 						<RadioGroup
 							name='fontSize'
