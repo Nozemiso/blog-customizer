@@ -2,8 +2,8 @@ import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, CSSProperties } from 'react';
 import clsx from 'clsx';
 
-import { Article } from './components/article/Article';
-import { ArticleParamsForm } from './components/article-params-form/ArticleParamsForm';
+import { Article } from 'components/article';
+import { ArticleParamsForm } from 'components/article-params-form';
 import { defaultArticleState } from './constants/articleProps';
 
 import './styles/index.scss';
@@ -27,7 +27,10 @@ const App = () => {
 					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm applyHandler={setArticleState} />
+			<ArticleParamsForm
+				applyHandler={setArticleState}
+				defaultValues={defaultArticleState}
+			/>
 			<Article />
 		</main>
 	);

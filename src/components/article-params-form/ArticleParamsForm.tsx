@@ -4,48 +4,57 @@ import { Button } from 'src/ui/button';
 import styles from './ArticleParamsForm.module.scss';
 import { Separator } from 'src/ui/separator';
 import clsx from 'clsx';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef } from 'react';
 import { Select } from 'src/ui/select';
 import {
 	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
-	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
 	OptionType,
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
+import { Text } from 'src/ui/text';
+import { useOutsideClickClose } from 'components/article-params-form/hooks/useOutsideClickClose';
 
 type articleParamsFormProps = {
 	applyHandler: (newArticleState: ArticleStateType) => void;
+	defaultValues: ArticleStateType;
 };
 
-export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
+export const ArticleParamsForm = ({
+	applyHandler,
+	defaultValues,
+}: articleParamsFormProps) => {
 	function openFormHandler() {
 		setOpen(!isOpen);
 	}
 
-	function formSubmitHandler(e: FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-		const newArticleState: ArticleStateType = {
+	function collectFormData(): ArticleStateType {
+		return {
 			fontFamilyOption: selectedFont,
 			fontColor: selectedFontColor,
 			backgroundColor: selectedBackgroundColor,
 			contentWidth: selectedContentWidth,
 			fontSizeOption: selectedFontSize,
 		};
-		applyHandler(newArticleState);
+	}
+
+	function formSubmitHandler(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		applyHandler(collectFormData());
 	}
 
 	function formResetHandler(e: FormEvent<HTMLFormElement>) {
-		setSelectedFont(defaultArticleState.fontFamilyOption);
-		setSelectedFontSize(defaultArticleState.fontSizeOption);
-		setSelectedFontColor(defaultArticleState.fontColor);
-		setSelectedBackgroundColor(defaultArticleState.backgroundColor);
-		setSelectedContentWidth(defaultArticleState.contentWidth);
-		formSubmitHandler(e);
+		e.preventDefault();
+		setSelectedFont(defaultValues.fontFamilyOption);
+		setSelectedFontSize(defaultValues.fontSizeOption);
+		setSelectedFontColor(defaultValues.fontColor);
+		setSelectedBackgroundColor(defaultValues.backgroundColor);
+		setSelectedContentWidth(defaultValues.contentWidth);
+		applyHandler(defaultValues);
 	}
 
 	const [isOpen, setOpen] = useState(false);
@@ -64,15 +73,26 @@ export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 		contentWidthArr[0]
 	);
 
+	const rootRef = useRef<HTMLDivElement>(null);
+	useOutsideClickClose({
+		isOpen,
+		rootRef,
+		onClose: openFormHandler,
+	});
+
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={openFormHandler} />
 			<aside
+				ref={rootRef}
 				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
 				<form
 					className={styles.form}
 					onSubmit={formSubmitHandler}
 					onReset={formResetHandler}>
+					<Text as={'h1'} weight={800} size={31}>
+						Задайте параметры
+					</Text>
 					<div className={styles.fieldsContainer}>
 						<Select
 							title='Шрифт'
