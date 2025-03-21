@@ -4,7 +4,7 @@ import { Button } from 'src/ui/button';
 import styles from './ArticleParamsForm.module.scss';
 import { Separator } from 'src/ui/separator';
 import clsx from 'clsx';
-import React from 'react';
+import { useState, FormEvent } from 'react';
 import { Select } from 'src/ui/select';
 import {
 	ArticleStateType,
@@ -27,7 +27,7 @@ export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 		setOpen(!isOpen);
 	}
 
-	function formSubmitHandler(e: React.FormEvent<HTMLFormElement>) {
+	function formSubmitHandler(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const newArticleState: ArticleStateType = {
 			fontFamilyOption: selectedFont,
@@ -39,7 +39,7 @@ export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 		applyHandler(newArticleState);
 	}
 
-	function formResetHandler(e: React.FormEvent<HTMLFormElement>) {
+	function formResetHandler(e: FormEvent<HTMLFormElement>) {
 		setSelectedFont(defaultArticleState.fontFamilyOption);
 		setSelectedFontSize(defaultArticleState.fontSizeOption);
 		setSelectedFontColor(defaultArticleState.fontColor);
@@ -48,20 +48,21 @@ export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 		formSubmitHandler(e);
 	}
 
-	const [isOpen, setOpen] = React.useState(false);
-	const [selectedFont, setSelectedFont] = React.useState<OptionType>(
+	const [isOpen, setOpen] = useState(false);
+	const [selectedFont, setSelectedFont] = useState<OptionType>(
 		fontFamilyOptions[0]
 	);
-	const [selectedFontSize, setSelectedFontSize] = React.useState<OptionType>(
+	const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(
 		fontSizeOptions[0]
 	);
-	const [selectedFontColor, setSelectedFontColor] = React.useState<OptionType>(
+	const [selectedFontColor, setSelectedFontColor] = useState<OptionType>(
 		fontColors[0]
 	);
 	const [selectedBackgroundColor, setSelectedBackgroundColor] =
-		React.useState<OptionType>(backgroundColors[0]);
-	const [selectedContentWidth, setSelectedContentWidth] =
-		React.useState<OptionType>(contentWidthArr[0]);
+		useState<OptionType>(backgroundColors[0]);
+	const [selectedContentWidth, setSelectedContentWidth] = useState<OptionType>(
+		contentWidthArr[0]
+	);
 
 	return (
 		<>
