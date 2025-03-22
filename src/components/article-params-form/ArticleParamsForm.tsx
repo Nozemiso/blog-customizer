@@ -10,6 +10,7 @@ import {
 	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
@@ -21,57 +22,34 @@ import { useOutsideClickClose } from 'components/article-params-form/hooks/useOu
 
 type articleParamsFormProps = {
 	applyHandler: (newArticleState: ArticleStateType) => void;
-	defaultValues: ArticleStateType;
 };
 
-export const ArticleParamsForm = ({
-	applyHandler,
-	defaultValues,
-}: articleParamsFormProps) => {
+export const ArticleParamsForm = ({ applyHandler }: articleParamsFormProps) => {
 	function openFormHandler() {
 		setOpen(!isOpen);
 	}
 
-	function collectFormData(): ArticleStateType {
-		return {
-			fontFamilyOption: selectedFont,
-			fontColor: selectedFontColor,
-			backgroundColor: selectedBackgroundColor,
-			contentWidth: selectedContentWidth,
-			fontSizeOption: selectedFontSize,
-		};
-	}
-
 	function formSubmitHandler(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		applyHandler(collectFormData());
+		applyHandler(formState);
 	}
 
 	function formResetHandler(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		setSelectedFont(defaultValues.fontFamilyOption);
-		setSelectedFontSize(defaultValues.fontSizeOption);
-		setSelectedFontColor(defaultValues.fontColor);
-		setSelectedBackgroundColor(defaultValues.backgroundColor);
-		setSelectedContentWidth(defaultValues.contentWidth);
-		applyHandler(defaultValues);
+		setFormState(defaultArticleState);
+		applyHandler(defaultArticleState);
+	}
+
+	function handleOnChange(field: keyof ArticleStateType) {
+		return (value: OptionType) => {
+			setFormState({ ...formState, [field]: value });
+		};
 	}
 
 	const [isOpen, setOpen] = useState(false);
-	const [selectedFont, setSelectedFont] = useState<OptionType>(
-		fontFamilyOptions[0]
-	);
-	const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(
-		fontSizeOptions[0]
-	);
-	const [selectedFontColor, setSelectedFontColor] = useState<OptionType>(
-		fontColors[0]
-	);
-	const [selectedBackgroundColor, setSelectedBackgroundColor] =
-		useState<OptionType>(backgroundColors[0]);
-	const [selectedContentWidth, setSelectedContentWidth] = useState<OptionType>(
-		contentWidthArr[0]
-	);
+
+	const [formState, setFormState] =
+		useState<ArticleStateType>(defaultArticleState);
 
 	const rootRef = useRef<HTMLDivElement>(null);
 	useOutsideClickClose({
@@ -96,37 +74,37 @@ export const ArticleParamsForm = ({
 					<div className={styles.fieldsContainer}>
 						<Select
 							title='Шрифт'
-							selected={selectedFont}
+							selected={formState.fontFamilyOption}
 							options={fontFamilyOptions}
-							onChange={(value) => setSelectedFont(value)}
+							onChange={handleOnChange('fontFamilyOption')}
 						/>
 						<RadioGroup
 							name='fontSize'
 							title='Размер шрифта'
-							selected={selectedFontSize}
+							selected={formState.fontSizeOption}
 							options={fontSizeOptions}
-							onChange={(value) => setSelectedFontSize(value)}
+							onChange={handleOnChange('fontSizeOption')}
 						/>
 						<Select
 							title='Цвет шрифта'
-							selected={selectedFontColor}
+							selected={formState.fontColor}
 							options={fontColors}
-							onChange={(value) => setSelectedFontColor(value)}
+							onChange={handleOnChange('fontColor')}
 						/>
 					</div>
 					<Separator />
 					<div className={styles.fieldsContainer}>
 						<Select
 							title='Цвет фона'
-							selected={selectedBackgroundColor}
+							selected={formState.backgroundColor}
 							options={backgroundColors}
-							onChange={(value) => setSelectedBackgroundColor(value)}
+							onChange={handleOnChange('backgroundColor')}
 						/>
 						<Select
 							title='Ширина контента'
-							selected={selectedContentWidth}
+							selected={formState.contentWidth}
 							options={contentWidthArr}
-							onChange={(value) => setSelectedContentWidth(value)}
+							onChange={handleOnChange('contentWidth')}
 						/>
 					</div>
 					<div className={styles.bottomContainer}>
